@@ -108,7 +108,7 @@ class Zmbr(object):
 		host = 'lmtp:{}:7025'.format(host)
 		return self.__zmbr.ma(user_id, 'zimbraMailTransport', host)
 
-	def setHashPwd(self, attrs):
+	def setHashPwd(self, attrs, hash_pwd):
 		"""
 		Change user userPassword directly to ldap
 		"""
@@ -116,7 +116,7 @@ class Zmbr(object):
 		# set hash password
 		pwd = [
 			(ldap.MOD_REPLACE, 'userPassword',
-			[attrs['userPassword']])
+			[hash_pwd])
 		]
 		self.__ldp.modify_s(dn, pwd)
 
@@ -261,12 +261,13 @@ class Migrate(object):
 				self.log.info("{} not found on target, do create account procedure".format(mail))
 				if not self.tgt.createUser(migrate):
 					logExit("Cannot create {}".format(mail))
+				account = self.tgt.getUser(mail)
 
 			# set hash password & also activate account
 			self.log.info("{} set target account hash pwd {}".format(mail, migrate['userPassword']))
-			self.tgt.setHashPwd(migrate)
+			self.tgt.setHashPwd(account, migrate['userPassword'])
 			self.log.info("{} set target account status to active".format(mail))
-			self.tgt.unlock(migrate)
+			self.tgt.unlock(account)
 
 			# disable (lock) status for source account
 			self.log.info("{} set source account status to lock".format(mail))
@@ -279,7 +280,7 @@ class Migrate(object):
 
 			# set zimbraMailTransport to server it self for make sure there will be no mail loop
 			self.log.info("{} set target mail transport to {}".format(mail, tgt_host))
-			self.tgt.setMailTransport(migrate, tgt_host)
+			self.tgt.setMailTransport(account, tgt_host)
 
 
 	def genZmzConf(self):

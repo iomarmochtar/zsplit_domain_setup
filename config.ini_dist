@@ -12,19 +12,19 @@ keep_success = no
 domains = domain.com
 
 [source]
-username = admin@domain.com
-password = userpwd
 host = ose.domain.com
 admin_port = 7071
+username = admin@domain.com
+password = userpwd
 ldap_pwd = ldap_pwd
 ldap_base = ou=people,dc=domain,dc=com
 ldap_port = 389
 
 [target]
-username = admin@domain.com
-password = userpwd
 host = ne.domain.com
 admin_port = 7071
+username = admin@domain.com
+password = userpwd
 ldap_pwd = ldap_pwd
 ldap_base = ou=people,dc=domain,dc=com
 ldap_port = 389
